@@ -1,0 +1,63 @@
+
+---
+
+
+model:
+  - input: features
+
+
+  - recurrent:
+    size: 50
+    type: lstm
+    sequence: yes
+    bidirectional: no
+  - batch_normalization
+
+  - recurrent:
+      size: 100
+      type: lstm
+      sequence: no
+      bidirectional: no
+
+  - dense: 1
+
+  - activation: relu
+
+  - output: prices
+
+loss:
+  - target: prices
+    name: mean_squared_error
+
+train:
+  data:
+    - jsonl: data/train.jsonl
+  epochs: 2                               
+  weights:
+    initial: t1/best.w.kur
+    best: t1/best.w.kur
+    last: t1/last.w.kur
+  log: t1/log
+  hooks:                                   # Let plot loss
+    - plot: t1/loss.png
+
+
+validate:
+  data:
+    - jsonl: data/test.jsonl
+  weights: t1/best.w.kur
+
+
+test:
+  data:
+    - jsonl: data/test.jsonl
+  weights: t1/best.w.kur
+
+
+evaluate:
+  data:
+    - jsonl: data/test.jsonl
+  weights: t1/best.w.kur
+
+  destination: t1/output.pkl
+...
